@@ -115,7 +115,9 @@ HTML_CONTENT = """<!DOCTYPE html>
             <button type="submit" class="btn">Submit</button>
         </form>
     </div>
-    
+</body>
+</html>
+"""
 class Handler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/' or self.path == '':
@@ -146,7 +148,3 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 with socketserver.TCPServer(("", PORT), Handler) as httpd:
     print(f"Server running at http://localhost:{PORT}")
     httpd.serve_forever() 
-</body>
-</html>
-"""
-
