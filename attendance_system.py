@@ -118,3 +118,33 @@ HTML_CONTENT = """<!DOCTYPE html>
 </body>
 </html>
 """
+class Handler(http.server.SimpleHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == '/' or self.path == '':
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+            self.wfile.write(HTML_CONTENT.encode("utf-8"))
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+    def do_POST(self):
+        if self.path == '/submit':
+            length = int(self.headers['Content-Length'])
+            data = urllib.parse.parse_qs(self.rfile.read(length).decode())
+           
+            name = data.get('name', [''])[0]
+            student_id = data.get('student_id', [''])[0]
+           
+            if name and student_id:
+                save_record(name, student_id)
+                print(f"Attendance recorded for: {name}")
+           
+            self.send_response(303)
+            self.send_header('Location', '/')
+            self.end_headers()
+
+with socketserver.TCPServer(("", PORT), Handler) as httpd:
+    print(f"Server running at http://localhost:{PORT}")
+    httpd.serve_forever() 
